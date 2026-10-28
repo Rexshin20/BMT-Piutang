@@ -1,0 +1,1 @@
+New-Item -ItemType Directory -Force -Path D:\perhutangan\laravel\resources\views\auth | Out-Null; New-Item -ItemType Directory -Force -Path D:\perhutangan\laravel\resources\views\errors | Out-Null; Write-Host "dirs ok"
