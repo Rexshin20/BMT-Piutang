@@ -237,26 +237,6 @@
   });
 
   /* ------------------------------------------------------------------ */
-  /* Tabs                                                                */
-  /* ------------------------------------------------------------------ */
-
-  document.addEventListener('click', (e) => {
-    const tab = e.target.closest('[data-tab]');
-    if (!tab || tab.disabled) return;
-    const group = tab.closest('[data-tabs]');
-    if (!group) return;
-    const name = tab.dataset.tab;
-    $$('[data-tab]', group).forEach((t) => {
-      const active = t === tab;
-      t.classList.toggle('active', active);
-      t.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-    $$('[data-tab-panel]', group).forEach((panel) => {
-      panel.classList.toggle('active', panel.dataset.tabPanel === name);
-    });
-  });
-
-  /* ------------------------------------------------------------------ */
   /* Command menu                                                        */
   /* ------------------------------------------------------------------ */
 

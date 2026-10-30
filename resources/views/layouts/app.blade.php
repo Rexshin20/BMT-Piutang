@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
-    <title>@yield('title', 'BMT Perhutangan')</title>
+    <title>@yield('title', 'BMT Cinde Barokah')</title>
 
     <script>
         (function () {
@@ -19,7 +19,8 @@
         })();
     </script>
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}?v={{ filemtime(public_path('images/favicon.png')) }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ filemtime(public_path('favicon.ico')) }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,7 +50,6 @@
                         <svg class="icon icon-sm"><use href="#icon-search"></use></svg>
                         <span class="hidden sm:inline">Search</span>
                     </span>
-                    <kbd class="hidden rounded border bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide sm:inline-flex">&#8984;K</kbd>
                 </button>
 
                 {{-- Theme switch --}}
@@ -90,21 +90,17 @@
                 @auth
                     @php $currentUser = auth()->user(); @endphp
                     <div class="dropdown">
-                        <button type="button" class="flex items-center gap-2 rounded-full" data-dropdown-trigger aria-expanded="false" aria-label="Buka menu profil">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-700 text-xs font-semibold text-white">{{ $currentUser->initials() }}</span>
-                            <span class="hidden flex-col text-left sm:flex">
+                        <button type="button" class="flex items-center gap-2 rounded-md px-1 text-left" data-dropdown-trigger aria-expanded="false" aria-label="Buka menu profil">
+                            <span class="flex flex-col text-left">
                                 <span class="text-sm font-semibold leading-tight">{{ $currentUser->name }}</span>
-                                <span class="text-xs text-muted-foreground">{{ $currentUser->email }}</span>
+                                <span class="hidden text-xs text-muted-foreground sm:block">{{ $currentUser->email }}</span>
                             </span>
                         </button>
                         <div data-dropdown class="dropdown-menu hidden w-56">
                             <div class="px-2 py-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-700 text-xs font-semibold text-white">{{ $currentUser->initials() }}</span>
-                                    <div class="grid min-w-0 text-sm leading-tight">
-                                        <span class="truncate font-semibold">{{ $currentUser->name }}</span>
-                                        <span class="truncate text-xs text-muted-foreground">{{ $currentUser->email }}</span>
-                                    </div>
+                                <div class="grid min-w-0 text-sm leading-tight">
+                                    <span class="truncate font-semibold">{{ $currentUser->name }}</span>
+                                    <span class="truncate text-xs text-muted-foreground">{{ $currentUser->email }}</span>
                                 </div>
                             </div>
                             <div class="dropdown-separator"></div>
@@ -129,7 +125,7 @@
 
         @unless (View::hasSection('hide-footer'))
             <footer class="app-footer">
-                &copy; {{ date('Y') }} BMT Perhutangan &middot; Baitul Maal wat Tamwil
+                &copy; {{ date('Y') }} BMT Cinde Barokah
             </footer>
         @endunless
     </div>
@@ -150,8 +146,11 @@
                 <a href="{{ route('dashboard') }}" class="command-item" data-command-item data-href="{{ route('dashboard') }}" data-keywords="home overview">
                     <svg class="icon text-muted-foreground"><use href="#icon-layout-dashboard"></use></svg> Dashboard
                 </a>
-                <a href="{{ route('piutang.index') }}" class="command-item" data-command-item data-href="{{ route('piutang.index') }}" data-keywords="receivables tagihan hutang">
+                <a href="{{ route('piutang.index') }}" class="command-item" data-command-item data-href="{{ route('piutang.index') }}" data-keywords="receivables tagihan hutang piutang">
                     <svg class="icon text-muted-foreground"><use href="#icon-wallet"></use></svg> Piutang
+                </a>
+                <a href="{{ route('master.piutang.index') }}" class="command-item" data-command-item data-href="{{ route('master.piutang.index') }}" data-keywords="data piutang catat pencatatan hutang master">
+                    <svg class="icon text-muted-foreground"><use href="#icon-wallet"></use></svg> Data Piutang
                 </a>
                 <a href="{{ route('master.borrowers') }}" class="command-item" data-command-item data-href="{{ route('master.borrowers') }}" data-keywords="peminjam borrower master nama alamat no hp">
                     <svg class="icon text-muted-foreground"><use href="#icon-users"></use></svg> Data Peminjam

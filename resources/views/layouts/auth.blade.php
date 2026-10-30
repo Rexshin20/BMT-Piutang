@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#ffffff">
-    <title>@yield('title', 'Masuk') - BMT Perhutangan</title>
+    <title>@yield('title', 'Masuk') - BMT Cinde Barokah</title>
 
     <script>
         (function () {
@@ -19,7 +19,8 @@
         })();
     </script>
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}?v={{ filemtime(public_path('images/favicon.png')) }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ filemtime(public_path('favicon.ico')) }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -31,11 +32,10 @@
     <div class="auth-shell">
         <div class="w-full max-w-md py-8">
             <div class="mb-6 flex flex-col items-center gap-2 text-center">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
-                    <svg class="icon size-5"><use href="#icon-wallet"></use></svg>
-                </div>
+                <img src="{{ asset('images/logo-bmt.png') }}?v={{ filemtime(public_path('images/logo-bmt.png')) }}" alt="Logo BMT Sumur Cinde Barokah"
+                    class="size-10 rounded-xl bg-white object-contain">
                 <div>
-                    <a href="{{ route('dashboard') }}" class="text-lg font-semibold">BMT Perhutangan</a>
+                    <a href="{{ route('dashboard') }}" class="text-lg font-semibold">BMT Cinde Barokah</a>
                     <p class="text-xs text-muted-foreground">Baitul Maal wat Tamwil</p>
                 </div>
             </div>

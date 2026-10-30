@@ -2,11 +2,10 @@
 <aside class="app-sidebar" id="sidebar" aria-label="Sidebar">
     <div class="flex h-16 shrink-0 items-center border-b border-sidebar-border px-3">
         <div class="flex w-full items-center gap-2 p-1.5">
-            <div class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <svg class="icon"><use href="#icon-command"></use></svg>
-            </div>
+            <img src="{{ asset('images/logo-bmt.png') }}?v={{ filemtime(public_path('images/logo-bmt.png')) }}" alt="Logo BMT Sumur Cinde Barokah"
+                class="size-8 shrink-0 rounded-lg bg-white object-contain">
             <div class="grid min-w-0 flex-1 text-sm leading-tight">
-                <span class="truncate font-semibold">BMT Perhutangan</span>
+                <span class="truncate font-semibold">BMT Cinde Barokah</span>
                 <span class="truncate text-xs text-muted-foreground">Baitul Maal wat Tamwil</span>
             </div>
         </div>
@@ -27,6 +26,10 @@
 
         <div class="sidebar-group-label">Master Data</div>
         <nav class="space-y-1">
+            <a href="{{ route('master.piutang.index') }}" class="sidebar-item {{ request()->routeIs('master.piutang.*') ? 'active' : '' }}">
+                <svg class="icon"><use href="#icon-wallet"></use></svg>
+                <span>Data Piutang</span>
+            </a>
             <a href="{{ route('master.borrowers') }}" class="sidebar-item {{ request()->routeIs('master.borrowers') ? 'active' : '' }}">
                 <svg class="icon"><use href="#icon-users"></use></svg>
                 <span>Data Peminjam</span>
@@ -71,16 +74,16 @@
                 <button type="button" data-collapse-trigger aria-expanded="{{ request()->routeIs('settings.*') ? 'true' : 'false' }}"
                     class="sidebar-item w-full {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                     <svg class="icon"><use href="#icon-settings"></use></svg>
-                    <span class="flex-1 text-left">Settings</span>
+                    <span class="flex-1 text-left">Pengaturan</span>
                     <svg class="icon chevron"><use href="#icon-chevron-right"></use></svg>
                 </button>
                 <div class="collapse-content">
                     <div class="sidebar-sub">
                         <a href="{{ route('settings.account') }}" class="sidebar-subitem {{ request()->routeIs('settings.account') ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-wrench"></use></svg> Akun
+                            <svg class="icon"><use href="#icon-user-cog"></use></svg> Akun
                         </a>
                         <a href="{{ route('settings.appearance') }}" class="sidebar-subitem {{ request()->routeIs('settings.appearance') ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-palette"></use></svg> Appearance
+                            <svg class="icon"><use href="#icon-palette"></use></svg> Tampilan
                         </a>
                     </div>
                 </div>
@@ -98,7 +101,6 @@
             <div class="dropdown w-full">
                 <button type="button" data-dropdown-trigger aria-expanded="false"
                     class="flex w-full items-center gap-2 rounded-md p-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-muted text-xs font-semibold">{{ $sidebarUser->initials() }}</span>
                     <span class="grid min-w-0 flex-1 text-sm leading-tight">
                         <span class="truncate font-semibold">{{ $sidebarUser->name }}</span>
                         <span class="truncate text-xs text-muted-foreground">{{ $sidebarUser->email }}</span>
@@ -107,12 +109,9 @@
                 </button>
                 <div data-dropdown class="dropdown-menu left top-auto bottom-full mt-0 mb-1 hidden w-full min-w-56">
                     <div class="px-2 py-2">
-                        <div class="flex items-center gap-2">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-lg border bg-muted text-xs font-semibold">{{ $sidebarUser->initials() }}</span>
-                            <div class="grid min-w-0 text-sm leading-tight">
-                                <span class="truncate font-semibold">{{ $sidebarUser->name }}</span>
-                                <span class="truncate text-xs text-muted-foreground">{{ $sidebarUser->email }}</span>
-                            </div>
+                        <div class="grid min-w-0 text-sm leading-tight">
+                            <span class="truncate font-semibold">{{ $sidebarUser->name }}</span>
+                            <span class="truncate text-xs text-muted-foreground">{{ $sidebarUser->email }}</span>
                         </div>
                     </div>
                     <div class="dropdown-separator"></div>

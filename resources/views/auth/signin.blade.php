@@ -7,7 +7,7 @@
         <div class="mb-6 space-y-1.5">
             <h1 class="text-lg font-semibold tracking-tight">Masuk</h1>
             <p class="text-sm text-muted-foreground">
-                Masuk untuk mengelola piutang dan data peminjam BMT Perhutangan.
+                Masuk untuk mengelola piutang dan data peminjam BMT Cinde Barokah.
             </p>
         </div>
 
@@ -17,7 +17,7 @@
             <div class="space-y-2">
                 <label class="label" for="signin-email">Email</label>
                 <input id="signin-email" name="email" type="email" class="input" value="{{ old('email') }}"
-                    placeholder="bmt@gmail.com" autocomplete="email" required autofocus>
+                    placeholder="nama@email.com" autocomplete="email" required autofocus>
                 @error('email')
                     <p class="text-xs font-medium text-destructive">{{ $message }}</p>
                 @enderror
@@ -48,10 +48,5 @@
                 Masuk
             </button>
         </form>
-
-        <div class="mt-6 rounded-lg border bg-muted/40 px-3 py-2 text-center text-xs text-muted-foreground">
-            Akun demo: <span class="font-medium text-foreground">bmt@gmail.com</span> /
-            <span class="font-medium text-foreground">12345678</span>
-        </div>
     </div>
 @endsection

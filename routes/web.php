@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\MasterDataController;
+use App\Http\Controllers\MasterPiutangController;
 use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TaskController;
@@ -29,6 +30,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/peminjam', [MasterDataController::class, 'store'])->name('borrowers.store');
         Route::put('/peminjam/{peminjam}', [MasterDataController::class, 'update'])->name('borrowers.update');
         Route::delete('/peminjam/{peminjam}', [MasterDataController::class, 'destroy'])->name('borrowers.destroy');
+
+        Route::get('/piutang', [MasterPiutangController::class, 'index'])->name('piutang.index');
+        Route::post('/piutang', [MasterPiutangController::class, 'store'])->name('piutang.store');
     });
 
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');

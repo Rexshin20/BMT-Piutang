@@ -30,6 +30,10 @@ class MasterDataController extends Controller
 
     public function destroy(Peminjam $peminjam)
     {
+        if ($peminjam->piutang()->exists()) {
+            return redirect()->route('master.borrowers')->with('status', 'Peminjam tidak bisa dihapus karena masih memiliki data piutang.');
+        }
+
         $peminjam->delete();
 
         return redirect()->route('master.borrowers')->with('status', 'Data peminjam berhasil dihapus.');

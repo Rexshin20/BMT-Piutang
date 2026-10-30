@@ -7,7 +7,7 @@
                 <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#6366f1] text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
                 </div>
-                <span class="font-semibold text-lg">Perhutangan</span>
+                <span class="font-semibold text-lg">BMT Cinde Barokah</span>
             </div>
             <button class="p-1 rounded hover:bg-[#e5e7eb]" onclick="toggleSidebar()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>

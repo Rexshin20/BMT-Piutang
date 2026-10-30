@@ -134,6 +134,10 @@
         'tableId' => 'peminjam-table',
         'searchPlaceholder' => 'Cari nama, alamat, atau no HP...',
         'emptyMessage' => 'Belum ada data peminjam',
+        'exportTitle' => 'Data Peminjam',
+        'exportColumns' => [0, 1, 2, 3],
+        'pdfWidths' => [28, 160, '*', 110],
+        'pdfAlign' => ['center', 'left', 'left', 'left'],
     ])
 @endsection
 

@@ -473,32 +473,7 @@
   }
 
   .app-footer {
-    @apply mt-auto shrink-0 border-t px-4 py-4 text-center text-sm text-muted-foreground;
-  }
-
-  /* Tabs */
-  .tab-list {
-    @apply inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground;
-  }
-
-  .tab-trigger {
-    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-all;
-  }
-
-  .tab-trigger.active {
-    @apply bg-background text-foreground shadow;
-  }
-
-  .tab-trigger:disabled {
-    @apply pointer-events-none opacity-50;
-  }
-
-  .tab-panel {
-    @apply hidden;
-  }
-
-  .tab-panel.active {
-    @apply block;
+    @apply sticky bottom-0 z-20 mt-auto shrink-0 border-t bg-background px-4 py-4 text-center text-sm text-muted-foreground;
   }
 
   /* Tables */
@@ -520,6 +495,16 @@
 
   .data-table td {
     @apply p-3 align-middle;
+  }
+
+  .data-table.table-center th,
+  .data-table.table-center td {
+    text-align: center !important;
+  }
+
+  .data-table.table-center th.text-start,
+  .data-table.table-center td.text-start {
+    text-align: left !important;
   }
 
   .data-table tbody tr {
@@ -679,6 +664,22 @@ body div.dt-container div.dt-layout-row:last-child {
   @apply border-t border-border;
 }
 
+body div.dt-container div.dt-layout-row:not(.dt-layout-table) div.dt-layout-cell {
+  @apply flex flex-wrap items-center gap-3;
+}
+
+body div.dt-container div.dt-layout-row:not(.dt-layout-table) div.dt-layout-cell.dt-layout-end {
+  @apply justify-end;
+}
+
+body div.dt-container div.dt-buttons {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+body div.dt-container div.dt-buttons .dt-button {
+  @apply inline-flex h-8 items-center justify-center whitespace-nowrap rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring;
+}
+
 body div.dt-container div.dt-length,
 body div.dt-container div.dt-search {
   @apply flex flex-wrap items-center gap-2;
@@ -746,4 +747,14 @@ body table.dataTable thead > tr > th.dt-orderable-desc {
 body table.dataTable thead > tr > th span.dt-column-order:before,
 body table.dataTable thead > tr > th span.dt-column-order:after {
   color: oklch(var(--muted-foreground));
+}
+
+/* Keep autofilled inputs consistent with the theme */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: oklch(var(--foreground));
+  -webkit-box-shadow: 0 0 0 1000px oklch(var(--card)) inset;
+  caret-color: oklch(var(--foreground));
+  transition: background-color 9999s ease-in-out 0s;
 }
