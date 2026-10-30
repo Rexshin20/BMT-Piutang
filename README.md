@@ -1,66 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BMT Cinde Barokah — Aplikasi Perhutangan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web sederhana untuk mencatat dan memantau **piutang (perhutangan)** BMT Cinde Barokah: kelola data peminjam, catat transaksi piutang, lihat daftar piutang, sampai ekspor laporan ke Excel dan PDF.
 
-## About Laravel
+Dibangun dengan **Laravel 10**, **Blade**, dan **Tailwind CSS** (build lokal, tanpa CDN).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Login** — seluruh halaman aplikasi hanya bisa diakses setelah masuk.
+- **Dashboard** — ringkasan piutang dan data terbaru.
+- **Piutang** — daftar piutang dengan pencarian, pengurutan, dan paging (DataTables), plus ekspor **Excel** dan **PDF**.
+- **Data Piutang** — catat piutang baru: peminjam, tanggal, barang, unit, dan harga. **Total dihitung otomatis** dari Harga × Unit, termasuk validasi ulang di server.
+- **Data Peminjam** — tambah, ubah, dan hapus data peminjam, lengkap dengan ekspor Excel/PDF.
+- **Pengaturan Akun** — ubah nama, email, dan password.
+- **Pengaturan Tampilan** — pilih font serta tema terang/gelap/sistem.
+- **Help Center** — kontak bantuan via WhatsApp.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Teknologi
 
-## Learning Laravel
+| Bagian | Keterangan |
+| --- | --- |
+| Framework | Laravel 10 (PHP 8.1+) |
+| Tampilan | Blade + Tailwind CSS 3 |
+| Tabel | DataTables 2 + Buttons (Excel/PDF) + pdfmake |
+| Database | MySQL / MariaDB |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Aset pihak ketiga (DataTables, pdfmake, JSZip) disimpan lokal di `public/vendor`, jadi aplikasi tidak bergantung pada CDN.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Kebutuhan
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP >= 8.1 beserta ekstensi standar Laravel
+- Composer
+- MySQL / MariaDB
+- Node.js (opsional, hanya untuk membangun ulang CSS)
 
-## Laravel Sponsors
+## Instalasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```bash
+git clone https://github.com/Rexshin20/BMT-Piutang.git
+cd BMT-Piutang
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-### Premium Partners
+Sesuaikan koneksi database di `.env`:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=perhutangan
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Contributing
+Lalu jalankan migrasi dan seeder, kemudian nyalakan server:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate --seed
+php artisan serve
+```
 
-## Code of Conduct
+Buka http://127.0.0.1:8000.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Akun Demo
 
-## Security Vulnerabilities
+| Email | Password |
+| --- | --- |
+| `bmt@gmail.com` | `12345678` |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Build CSS
 
-## License
+Tailwind di-build manual ke `public/css/app.css`. Setiap kali ada perubahan class di Blade atau `resources/css/app.css`, jalankan:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+npx tailwindcss@3.4.17 -c tailwind.config.js -i resources/css/app.css -o public/css/app.css --minify
+php artisan view:clear
+```
+
+## Struktur Singkat
+
+```
+app/Http/Controllers     Controller halaman & data
+app/Models               Model Peminjam, Piutang, User
+database/migrations      Skema tabel
+database/seeders         Data awal (peminjam, piutang, akun demo)
+resources/views          Semua halaman Blade
+resources/css/app.css    Sumber Tailwind + komponen UI
+public/css/app.css       Hasil build Tailwind
+public/vendor            DataTables, Buttons, pdfmake, JSZip
+public/images            Logo dan favicon
+```
+
+## Catatan
+
+- File `.env` tidak disertakan di repository; buat dari `.env.example`.
+- Field **Total** pada form Data Piutang bersifat read-only dan selalu dihitung dari `harga × unit`, baik di browser maupun di server.
+- Format uang memakai pemisah ribuan Indonesia (contoh: `20.000`).
