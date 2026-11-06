@@ -36,38 +36,6 @@
             </a>
         </nav>
 
-        <div class="sidebar-group-label">Pages</div>
-        <nav class="space-y-1">
-            <div class="collapsible {{ request()->routeIs('errors.*') ? 'open' : '' }}">
-                <button type="button" data-collapse-trigger aria-expanded="{{ request()->routeIs('errors.*') ? 'true' : 'false' }}"
-                    class="sidebar-item w-full {{ request()->routeIs('errors.*') ? 'active' : '' }}">
-                    <svg class="icon"><use href="#icon-bug"></use></svg>
-                    <span class="flex-1 text-left">Errors</span>
-                    <svg class="icon chevron"><use href="#icon-chevron-right"></use></svg>
-                </button>
-                <div class="collapse-content">
-                    <div class="sidebar-sub">
-                        @php $errorCode = request()->route('code'); @endphp
-                        <a href="{{ route('errors.show', 401) }}" class="sidebar-subitem {{ $errorCode == '401' ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-lock"></use></svg> Unauthorized
-                        </a>
-                        <a href="{{ route('errors.show', 403) }}" class="sidebar-subitem {{ $errorCode == '403' ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-user-x"></use></svg> Forbidden
-                        </a>
-                        <a href="{{ route('errors.show', 404) }}" class="sidebar-subitem {{ $errorCode == '404' ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-file-x"></use></svg> Not Found
-                        </a>
-                        <a href="{{ route('errors.show', 500) }}" class="sidebar-subitem {{ $errorCode == '500' ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-server-off"></use></svg> Internal Server Error
-                        </a>
-                        <a href="{{ route('errors.show', 503) }}" class="sidebar-subitem {{ $errorCode == '503' ? 'active' : '' }}">
-                            <svg class="icon"><use href="#icon-construction"></use></svg> Maintenance
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
         <div class="sidebar-group-label">Other</div>
         <nav class="space-y-1">
             <div class="collapsible {{ request()->routeIs('settings.*') ? 'open' : '' }}">
