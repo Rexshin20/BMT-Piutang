@@ -22,6 +22,14 @@
                 <svg class="icon"><use href="#icon-wallet"></use></svg>
                 <span>Piutang</span>
             </a>
+            <a href="{{ route('pembayaran.index') }}" class="sidebar-item {{ request()->routeIs('pembayaran.*') ? 'active' : '' }}">
+                <svg class="icon"><use href="#icon-credit-card"></use></svg>
+                <span>Pembayaran</span>
+            </a>
+            <a href="{{ route('lunas.index') }}" class="sidebar-item {{ request()->routeIs('lunas.*') ? 'active' : '' }}">
+                <svg class="icon"><use href="#icon-circle-check"></use></svg>
+                <span>Lunas</span>
+            </a>
         </nav>
 
         <div class="sidebar-group-label">Master Data</div>

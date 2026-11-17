@@ -5,23 +5,26 @@
 @section('content')
     <div>
         <h1 class="text-2xl font-bold tracking-tight">Data Piutang</h1>
-        <p class="text-muted-foreground">Catat piutang baru untuk peminjam.</p>
+        <p class="text-muted-foreground">Catat piutang baru. Satu nota bisa berisi beberapa barang.</p>
     </div>
 
-    <div class="mt-4 max-w-3xl rounded-lg border bg-card p-5 shadow-sm">
+    @php
+        $oldItems = old('items');
+        if (!is_array($oldItems) || count($oldItems) === 0) {
+            $oldItems = [['barang' => '', 'unit' => '1', 'harga' => '']];
+        }
+    @endphp
+
+    <div class="mt-4 max-w-4xl rounded-lg border bg-card p-5 shadow-sm">
         <form method="POST" action="{{ route('master.piutang.store') }}" class="space-y-4">
             @csrf
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="space-y-2">
-                    <label class="label" for="piutang-peminjam">Peminjam</label>
-                    <select id="piutang-peminjam" name="peminjam_id" class="select" required>
-                        <option value="" disabled {{ old('peminjam_id') ? '' : 'selected' }}>Pilih peminjam</option>
-                        @foreach ($borrowers as $borrower)
-                            <option value="{{ $borrower->id }}" @selected(old('peminjam_id') == $borrower->id)>{{ $borrower->nama }}</option>
-                        @endforeach
-                    </select>
-                    @error('peminjam_id')
+                    <label class="label" for="piutang-nota">Nomor Nota</label>
+                    <input id="piutang-nota" name="nomor_nota" type="text" class="input"
+                        value="{{ old('nomor_nota') }}" placeholder="Contoh: 001/NS/XI/2026" required>
+                    @error('nomor_nota')
                         <p class="text-xs font-medium text-destructive">{{ $message }}</p>
                     @enderror
                 </div>
@@ -36,84 +39,145 @@
                 </div>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-3">
-                <div class="space-y-2 sm:col-span-2">
-                    <label class="label" for="piutang-barang">Barang</label>
-                    <input id="piutang-barang" name="barang" type="text" class="input"
-                        value="{{ old('barang') }}" placeholder="Contoh: Beras" required>
-                    @error('barang')
-                        <p class="text-xs font-medium text-destructive">{{ $message }}</p>
-                    @enderror
-                </div>
+            <div class="space-y-2">
+                <label class="label" for="piutang-peminjam">Peminjam</label>
+                <select id="piutang-peminjam" name="peminjam_id" class="select" required>
+                    <option value="" disabled {{ old('peminjam_id') ? '' : 'selected' }}>Pilih peminjam</option>
+                    @foreach ($borrowers as $borrower)
+                        <option value="{{ $borrower->id }}" @selected(old('peminjam_id') == $borrower->id)>{{ $borrower->nama }}</option>
+                    @endforeach
+                </select>
+                @error('peminjam_id')
+                    <p class="text-xs font-medium text-destructive">{{ $message }}</p>
+                @enderror
+            </div>
 
+            <div class="space-y-3">
                 <div class="space-y-2">
-                    <label class="label" for="piutang-unit">Unit</label>
-                    <input id="piutang-unit" name="unit" type="number" min="1" step="1" inputmode="numeric"
-                        class="input tabular-nums" value="{{ old('unit', 1) }}" required>
-                    @error('unit')
-                        <p class="text-xs font-medium text-destructive">{{ $message }}</p>
-                    @enderror
+                    <label class="label" for="piutang-jumlah">Jumlah Barang</label>
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <input id="piutang-jumlah" type="number" min="1" max="100" step="1" inputmode="numeric"
+                            class="input w-24 tabular-nums" value="{{ count($oldItems) }}">
+                        <span class="text-xs text-muted-foreground">Ketik jumlah barang (misal 10) — kotak isian menyesuaikan otomatis.</span>
+                    </div>
+                </div>
+                @error('items')
+                    <p class="text-xs font-medium text-destructive">{{ $message }}</p>
+                @enderror
+                <div id="piutang-items" class="space-y-2">
+                    @foreach ($oldItems as $i => $item)
+                        <div class="piutang-item-row space-y-1">
+                            <div class="flex flex-wrap items-center gap-2 rounded-md border px-3 py-2">
+                                <span data-row-no class="w-6 shrink-0 text-center text-xs font-semibold tabular-nums text-muted-foreground">{{ $i + 1 }}</span>
+                                <input type="text" name="items[{{ $i }}][barang]" class="input min-w-40 flex-1"
+                                    placeholder="Nama barang" value="{{ $item['barang'] ?? '' }}" required>
+                                <input type="number" name="items[{{ $i }}][unit]" min="1" step="1" inputmode="numeric" data-item-unit
+                                    class="input w-20 tabular-nums" placeholder="Unit" value="{{ $item['unit'] ?? 1 }}" required>
+                                <input type="text" inputmode="numeric" autocomplete="off" name="items[{{ $i }}][harga]"
+                                    data-rupiah data-item-harga class="input w-32 tabular-nums" placeholder="Harga"
+                                    value="{{ isset($item['harga']) && $item['harga'] !== '' ? number_format((int) preg_replace('/\D/', '', $item['harga']), 0, ',', '.') : '' }}"
+                                    required>
+                                <input type="text" data-item-total
+                                    class="input w-32 tabular-nums bg-muted/50 text-muted-foreground" placeholder="Total"
+                                    readonly tabindex="-1">
+                            </div>
+                            @php $rowErrors = $errors->get('items.' . $i . '.barang') + $errors->get('items.' . $i . '.unit') + $errors->get('items.' . $i . '.harga'); @endphp
+                            @if ($rowErrors)
+                                <p class="px-1 text-xs font-medium text-destructive">{{ implode(' ', $rowErrors) }}</p>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2">
-                <div class="space-y-2">
-                    <label class="label" for="piutang-harga">Harga</label>
-                    <input id="piutang-harga" name="harga" type="text" inputmode="numeric" autocomplete="off"
-                        class="input tabular-nums" data-rupiah
-                        value="{{ old('harga') ? number_format((int) preg_replace('/\D/', '', old('harga')), 0, ',', '.') : '' }}"
-                        placeholder="0" required>
-                    @error('harga')
-                        <p class="text-xs font-medium text-destructive">{{ $message }}</p>
-                    @enderror
+            <div class="flex flex-wrap items-end justify-between gap-4 border-t pt-4">
+                <div class="space-y-1">
+                    <p class="text-sm text-muted-foreground">Total Keseluruhan</p>
+                    <p id="piutang-grand-total" class="text-2xl font-bold tabular-nums">Rp 0</p>
                 </div>
-
-                <div class="space-y-2">
-                    <label class="label" for="piutang-total">Total</label>
-                    <input id="piutang-total" name="total" type="text" inputmode="numeric" autocomplete="off"
-                        class="input tabular-nums bg-muted/50 text-muted-foreground" readonly
-                        value="{{ old('total') ? number_format((int) preg_replace('/\D/', '', old('total')), 0, ',', '.') : '' }}"
-                        placeholder="0">
-                    <p class="form-description">Otomatis dari Harga × Unit.</p>
-                </div>
-            </div>
-
-            <div class="flex justify-end border-t pt-4">
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
     </div>
+
+    <template id="piutang-row-template">
+        <div class="piutang-item-row space-y-1">
+            <div class="flex flex-wrap items-center gap-2 rounded-md border px-3 py-2">
+                <span data-row-no class="w-6 shrink-0 text-center text-xs font-semibold tabular-nums text-muted-foreground">1</span>
+                <input type="text" name="items[__INDEX__][barang]" class="input min-w-40 flex-1" placeholder="Nama barang" required>
+                <input type="number" name="items[__INDEX__][unit]" min="1" step="1" inputmode="numeric" data-item-unit
+                    class="input w-20 tabular-nums" placeholder="Unit" value="1" required>
+                <input type="text" inputmode="numeric" autocomplete="off" name="items[__INDEX__][harga]"
+                    data-rupiah data-item-harga class="input w-32 tabular-nums" placeholder="Harga" required>
+                <input type="text" data-item-total
+                    class="input w-32 tabular-nums bg-muted/50 text-muted-foreground" placeholder="Total"
+                    readonly tabindex="-1">
+            </div>
+        </div>
+    </template>
 @endsection
 
 @push('scripts')
     <script>
-        document.querySelectorAll('[data-rupiah]').forEach(function (input) {
-            function format() {
-                const digits = input.value.replace(/\D/g, '');
-                input.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
-            }
-
-            input.addEventListener('input', format);
-            format();
-        });
-
         (function () {
-            const harga = document.getElementById('piutang-harga');
-            const unit = document.getElementById('piutang-unit');
-            const total = document.getElementById('piutang-total');
+            const container = document.getElementById('piutang-items');
+            const template = document.getElementById('piutang-row-template');
+            const countInput = document.getElementById('piutang-jumlah');
+            const grandTotal = document.getElementById('piutang-grand-total');
+            const formatter = new Intl.NumberFormat('id-ID');
 
-            function updateTotal() {
-                const hargaValue = parseInt(harga.value.replace(/\D/g, '') || '0', 10);
-                const unitValue = parseInt(unit.value.replace(/\D/g, '') || '0', 10);
-                const result = hargaValue * unitValue;
-                total.value = result > 0 ? new Intl.NumberFormat('id-ID').format(result) : '';
+            function digits(value) {
+                return (value || '').replace(/\D/g, '');
             }
 
-            [harga, unit].forEach(function (input) {
-                input.addEventListener('input', updateTotal);
+            function recalcRow(row) {
+                const harga = parseInt(digits(row.querySelector('[data-item-harga]').value) || '0', 10);
+                const unit = parseInt(row.querySelector('[data-item-unit]').value) || 0;
+                const result = harga * unit;
+                row.querySelector('[data-item-total]').value = result > 0 ? formatter.format(result) : '';
+            }
+
+            function recalc() {
+                let sum = 0;
+                container.querySelectorAll('.piutang-item-row').forEach(function (row, index) {
+                    const no = row.querySelector('[data-row-no]');
+                    if (no) no.textContent = index + 1;
+                    recalcRow(row);
+                    sum += parseInt(digits(row.querySelector('[data-item-total]').value) || '0', 10);
+                });
+                grandTotal.textContent = 'Rp ' + formatter.format(sum);
+            }
+
+            function syncRows() {
+                let target = parseInt(countInput.value) || 1;
+                if (target < 1) target = 1;
+                if (target > 100) target = 100;
+                let rows = container.querySelectorAll('.piutang-item-row');
+                while (rows.length < target) {
+                    container.insertAdjacentHTML('beforeend', template.innerHTML.replaceAll('__INDEX__', Date.now() + rows.length));
+                    rows = container.querySelectorAll('.piutang-item-row');
+                }
+                while (rows.length > target) {
+                    rows[rows.length - 1].remove();
+                    rows = container.querySelectorAll('.piutang-item-row');
+                }
+                recalc();
+            }
+
+            countInput.addEventListener('input', syncRows);
+            countInput.addEventListener('change', syncRows);
+
+            container.addEventListener('input', function (e) {
+                if (e.target.matches('[data-rupiah]')) {
+                    const d = digits(e.target.value);
+                    e.target.value = d ? formatter.format(d) : '';
+                }
+                recalc();
             });
 
-            updateTotal();
+            container.addEventListener('change', recalc);
+
+            recalc();
         })();
     </script>
 @endpush

@@ -70,7 +70,7 @@
             <div class="card col-span-1 lg:col-span-3">
                 <div class="card-header">
                     <h3 class="card-title">Piutang Terbaru</h3>
-                    <p class="card-description">{{ $transactionsThisMonth }} transaksi tercatat bulan ini.</p>
+                    <p class="card-description">{{ $unpaidCount }} transaksi belum lunas.</p>
                 </div>
                 <div class="card-content">
                     <div class="divide-y">

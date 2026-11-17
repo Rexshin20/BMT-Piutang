@@ -9,13 +9,14 @@ class Piutang extends Model
 {
     protected $table = 'piutang';
 
-    protected $fillable = ['peminjam_id', 'tanggal', 'barang', 'unit', 'harga', 'total'];
+    protected $fillable = ['peminjam_id', 'nomor_nota', 'tanggal', 'barang', 'unit', 'harga', 'total', 'lunas_at'];
 
     protected $casts = [
         'tanggal' => 'date',
         'unit' => 'integer',
         'harga' => 'integer',
         'total' => 'integer',
+        'lunas_at' => 'datetime',
     ];
 
     public function peminjam(): BelongsTo

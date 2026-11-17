@@ -8,6 +8,7 @@ use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\MasterPiutangController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TaskController;
@@ -24,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/piutang', [ReceivableController::class, 'index'])->name('piutang.index');
+    Route::put('/piutang/{piutang}', [ReceivableController::class, 'update'])->name('piutang.update');
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.store');
+    Route::get('/lunas', [ReceivableController::class, 'lunas'])->name('lunas.index');
 
     Route::prefix('master')->name('master.')->group(function () {
         Route::get('/peminjam', [MasterDataController::class, 'index'])->name('borrowers');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pembayaran;
 use App\Models\Peminjam;
 use App\Models\Piutang;
 use Illuminate\Support\Carbon;
@@ -10,29 +11,43 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $receivables = Piutang::query()
-            ->with('peminjam')
-            ->get()
-            ->map(fn (Piutang $piutang) => [
-                'nama' => $piutang->peminjam?->nama ?? '-',
-                'tanggal' => $piutang->tanggal->format('Y-m-d'),
-                'barang' => $piutang->barang,
-                'harga' => $piutang->harga,
-                'total' => $piutang->total,
-            ])
-            ->all();
+        $receivables = Piutang::query()->with('peminjam')->get();
 
-        $totalPiutang = array_sum(array_column($receivables, 'total'));
-        $transactions = count($receivables);
+        $paidByNota = Pembayaran::query()
+            ->selectRaw('nomor_nota, SUM(jumlah) as total')
+            ->groupBy('nomor_nota')
+            ->pluck('total', 'nomor_nota');
+
+        $remaining = [];
+
+        foreach ($receivables->whereNull('lunas_at')->sortBy('id') as $receivable) {
+            $key = $receivable->nomor_nota ?? ('#' . $receivable->id);
+
+            if (!array_key_exists($key, $remaining)) {
+                $remaining[$key] = (int) ($paidByNota[$key] ?? 0);
+            }
+
+            $applied = min($receivable->total, $remaining[$key]);
+            $receivable->dibayar = $applied;
+            $receivable->sisa = $receivable->total - $applied;
+            $remaining[$key] -= $applied;
+        }
+
+        $unpaid = $receivables->whereNull('lunas_at')
+            ->sortByDesc(fn (Piutang $piutang) => $piutang->tanggal->format('Y-m-d') . '|' . str_pad((string) $piutang->id, 10, '0', STR_PAD_LEFT))
+            ->values();
+
+        $totalSisa = (int) $unpaid->sum('sisa');
+        $lunas = $receivables->whereNotNull('lunas_at');
+        $totalLunas = (int) $lunas->sum('total');
         $borrowerCount = Peminjam::count();
-        $uniqueBorrowers = count(array_unique(array_column($receivables, 'nama')));
-        $average = $transactions > 0 ? (int) round($totalPiutang / $transactions) : 0;
+        $uniqueBorrowers = $unpaid->pluck('peminjam_id')->unique()->count();
 
         $byMonth = [];
 
         foreach ($receivables as $receivable) {
-            $month = substr($receivable['tanggal'], 0, 7);
-            $byMonth[$month] = ($byMonth[$month] ?? 0) + $receivable['total'];
+            $month = $receivable->tanggal->format('Y-m');
+            $byMonth[$month] = ($byMonth[$month] ?? 0) + $receivable->total;
         }
 
         ksort($byMonth);
@@ -47,72 +62,52 @@ class DashboardController extends Controller
             ];
         }
 
-        $thisMonthKey = now()->format('Y-m');
-        $lastMonthKey = now()->subMonthNoOverflow()->format('Y-m');
-        $thisMonth = $byMonth[$thisMonthKey] ?? 0;
-        $lastMonth = $byMonth[$lastMonthKey] ?? 0;
-        $growth = $lastMonth > 0 ? (($thisMonth - $lastMonth) / $lastMonth) * 100 : null;
-
-        $transactionsThisMonth = 0;
-
-        foreach ($receivables as $receivable) {
-            if (str_starts_with($receivable['tanggal'], $thisMonthKey)) {
-                $transactionsThisMonth++;
-            }
-        }
+        $paymentsThisMonth = Pembayaran::query()
+            ->whereYear('tanggal', now()->year)
+            ->whereMonth('tanggal', now()->month);
+        $paymentsThisMonthTotal = (int) (clone $paymentsThisMonth)->sum('jumlah');
+        $paymentsThisMonthCount = (clone $paymentsThisMonth)->count();
 
         $metrics = [
             [
-                'title' => 'Total Piutang',
-                'value' => 'Rp ' . number_format($totalPiutang, 0, ',', '.'),
-                'change' => $growth === null
-                    ? 'Belum ada data bulan lalu'
-                    : $this->growthLabel($growth) . ' dari bulan lalu',
+                'title' => 'Sisa Piutang',
+                'value' => 'Rp ' . number_format($totalSisa, 0, ',', '.'),
+                'change' => $unpaid->count() . ' transaksi belum lunas',
                 'icon' => 'wallet',
+            ],
+            [
+                'title' => 'Sudah Lunas',
+                'value' => 'Rp ' . number_format($totalLunas, 0, ',', '.'),
+                'change' => $lunas->count() . ' transaksi lunas',
+                'icon' => 'circle-check',
             ],
             [
                 'title' => 'Peminjam',
                 'value' => (string) $borrowerCount,
-                'change' => $uniqueBorrowers . ' peminjam tercatat di piutang',
+                'change' => $uniqueBorrowers . ' peminjam masih punya piutang',
                 'icon' => 'users',
             ],
             [
-                'title' => 'Transaksi',
-                'value' => (string) $transactions,
-                'change' => $transactionsThisMonth . ' transaksi bulan ini',
-                'icon' => 'list-todo',
-            ],
-            [
-                'title' => 'Rata-rata Piutang',
-                'value' => 'Rp ' . number_format($average, 0, ',', '.'),
-                'change' => 'per transaksi',
+                'title' => 'Pembayaran Bulan Ini',
+                'value' => 'Rp ' . number_format($paymentsThisMonthTotal, 0, ',', '.'),
+                'change' => $paymentsThisMonthCount . ' kali bayar tercatat',
                 'icon' => 'credit-card',
             ],
         ];
 
-        $sorted = $receivables;
-        usort($sorted, fn ($a, $b) => strcmp($b['tanggal'], $a['tanggal']));
-
-        $recentPiutang = [];
-
-        foreach (array_slice($sorted, 0, 5) as $receivable) {
-            $recentPiutang[] = [
-                'name' => $receivable['nama'],
-                'meta' => $receivable['barang'] . ' • ' . Carbon::parse($receivable['tanggal'])->format('d M Y'),
-                'amount' => '+Rp ' . number_format($receivable['total'], 0, ',', '.'),
+        $recentPiutang = $unpaid->take(5)->map(function (Piutang $piutang) {
+            return [
+                'name' => $piutang->peminjam?->nama ?? '-',
+                'meta' => ($piutang->nomor_nota ? 'Nota ' . $piutang->nomor_nota . ' • ' : '')
+                    . $piutang->barang . ' • ' . $piutang->tanggal->format('d M Y'),
+                'amount' => 'Rp ' . number_format($piutang->sisa, 0, ',', '.'),
             ];
-        }
+        })->all();
 
         return view('dashboard', compact(
             'metrics',
             'overview',
             'recentPiutang',
-            'transactionsThisMonth',
-        ));
-    }
-
-    private function growthLabel(float $growth): string
-    {
-        return ($growth >= 0 ? '+' : '') . number_format($growth, 1, ',', '.') . '%';
+        ) + ['unpaidCount' => $unpaid->count()]);
     }
 }
